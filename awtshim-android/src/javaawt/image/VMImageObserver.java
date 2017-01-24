@@ -1,13 +1,12 @@
-package desktop.javaawt.image;
+package javaawt.image;
 
 import javaawt.Image;
-import javaawt.image.ImageObserver;
 
 public class VMImageObserver implements ImageObserver
 {
-	private java.awt.image.ImageObserver delegate = null;
+	private Object delegate = null;
 
-	public VMImageObserver(java.awt.image.ImageObserver delegate)
+	public VMImageObserver(Object delegate)
 	{
 		this.delegate = delegate;
 	}

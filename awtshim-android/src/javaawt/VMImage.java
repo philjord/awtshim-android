@@ -1,16 +1,15 @@
-package desktop.javaawt;
+package javaawt;
 
-import desktop.javaawt.image.VMImageProducer;
-import javaawt.Graphics;
-import javaawt.Image;
+import android.graphics.Bitmap;
+
 import javaawt.image.ImageObserver;
 import javaawt.image.ImageProducer;
 
 public class VMImage extends Image
 {
-	private java.awt.Image delegate = null;
+	private android.graphics.Bitmap delegate = null;
 
-	public VMImage(java.awt.Image delegate)
+	public VMImage(android.graphics.Bitmap delegate)
 	{
 		this.delegate = delegate;
 	}
@@ -24,55 +23,56 @@ public class VMImage extends Image
 	@Override
 	public void flush()
 	{
-		delegate.flush();
+		throw new UnsupportedOperationException();//delegate.flush();
 	}
 
 	@Override
 	public float getAccelerationPriority()
 	{
-		return delegate.getAccelerationPriority();
+		throw new UnsupportedOperationException();//return delegate.getAccelerationPriority();
 	}
 
 	@Override
 	public Graphics getGraphics()
 	{
-		return new VMGraphics(delegate.getGraphics());
+		return new VMGraphics2D(delegate);
 	}
 
 	@Override
 	public int getHeight(ImageObserver observer)
 	{
-		return delegate.getHeight((java.awt.image.ImageObserver) observer.getDelegate());
+		return delegate.getHeight();
 	}
 
 	@Override
 	public Object getProperty(String name, ImageObserver observer)
 	{
-		return delegate.getProperty(name, (java.awt.image.ImageObserver) observer.getDelegate());
+		// called by ImageIcon just for "comment"
+		 return null;
 	}
 
 	@Override
 	public Image getScaledInstance(int width, int height, int hints)
 	{
-		return new VMImage(delegate.getScaledInstance(width, height, hints));
+		return new VMImage(Bitmap.createScaledBitmap(delegate, width, height, true));
 	}
 
 	@Override
 	public ImageProducer getSource()
 	{
-		return new VMImageProducer(delegate.getSource());
+		throw new UnsupportedOperationException();//return new VMImageProducer(delegate.getSource());
 	}
 
 	@Override
 	public int getWidth(ImageObserver observer)
 	{
-		return delegate.getWidth((java.awt.image.ImageObserver) observer.getDelegate());
+		return delegate.getWidth();
 	}
 
 	@Override
 	public void setAccelerationPriority(float priority)
 	{
-		delegate.setAccelerationPriority(priority);
+		throw new UnsupportedOperationException();//delegate.setAccelerationPriority(priority);
 	}
 
 }
