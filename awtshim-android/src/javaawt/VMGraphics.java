@@ -1,7 +1,6 @@
 package javaawt;
 
 import android.graphics.Path;
-import android.graphics.Region;
 
 import java.text.AttributedCharacterIterator;
 
@@ -33,6 +32,7 @@ public class VMGraphics implements Graphics
 		return delegate;
 	}
 
+	@Override
 	public Graphics create()
 	{
 		delegate.save();
@@ -152,6 +152,13 @@ public class VMGraphics implements Graphics
 	{
 		canvasPaint.setStyle(android.graphics.Paint.Style.STROKE);
 		delegate.drawRoundRect(toRectF(x, y, width, height), arcWidth, arcHeight, canvasPaint);
+	}
+	
+	@Override
+	public void drawRect(int x, int y, int width, int height)
+	{
+		canvasPaint.setStyle(android.graphics.Paint.Style.STROKE);
+		delegate.drawRect(toRectF(x, y, width, height), canvasPaint);
 	}
 
 	@Override
