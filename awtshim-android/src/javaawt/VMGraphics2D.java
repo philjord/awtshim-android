@@ -30,8 +30,6 @@ import javaawt.image.BufferedImageOp;
 import javaawt.image.ImageObserver;
 import javaawt.image.RenderedImage;
 
-import static android.R.attr.path;
-
 
 public class VMGraphics2D extends VMGraphics implements Graphics2D
 {

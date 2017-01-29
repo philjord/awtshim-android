@@ -1,6 +1,7 @@
 package javaawt;
 
 import android.graphics.Path;
+import android.graphics.Typeface;
 
 import java.text.AttributedCharacterIterator;
 
@@ -301,7 +302,7 @@ public class VMGraphics implements Graphics
 	}
 
 
-	private Font currentFont = new VMFont();
+	private Font currentFont = new VMFont(Typeface.DEFAULT, 24);
 
 	@Override
 	public Font getFont()
@@ -313,6 +314,8 @@ public class VMGraphics implements Graphics
 	public void setFont(Font f)
 	{
 		currentFont = f;
+		canvasPaint.setTypeface((Typeface)((VMFont)f).getDelegate());
+		canvasPaint.setTextSize(f.getSize());
 	}
 
 

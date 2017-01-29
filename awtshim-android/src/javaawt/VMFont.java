@@ -8,19 +8,23 @@ import android.graphics.Typeface;
 
 public class VMFont extends Font
 {
-	private Typeface typeface =  Typeface.DEFAULT;
+	private Typeface typeface;
+	private int size = 12;
+
+	public VMFont(Typeface typeface, int size)
+	{
+		this.typeface = typeface;
+		this.size = size;
+	}
 
 	public Object getDelegate()
 	{
 		return typeface;
 	}
+
 	@Override
 	public int getSize()
 	{
-		//What the hell to do here? typeface doesn't have a size?
-		//textSize is an attribute of teh TExtView thign, not typeface??
-
-		//ok so textsize is held in the  paint, so not exactly sure what to do with this guy now, hold it and get it out with any paints I use probably
-		return 12;
+		return size;
 	}
 }
