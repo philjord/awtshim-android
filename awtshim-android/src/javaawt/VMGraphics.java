@@ -244,6 +244,7 @@ public class VMGraphics implements Graphics
 	@Override
 	public void drawString(String s, int x, int y)
 	{
+		canvasPaint.setStyle(android.graphics.Paint.Style.FILL);
 		delegate.drawText(s, x, y, canvasPaint);
 	}
 

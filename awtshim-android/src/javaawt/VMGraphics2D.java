@@ -79,6 +79,7 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 	@Override
 	public void drawString(String s, float x, float y)
 	{
+		canvasPaint.setStyle(android.graphics.Paint.Style.FILL);
 		delegate.drawText(s, x, y, canvasPaint);
 	}
 
