@@ -313,13 +313,15 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 		{
 			Area a = (Area) s;
 			Path p = toPath(a, scale);
-			delegate.drawPath(p, canvasPaint);
+			//delegate.drawPath(p, canvasPaint);
+			drawPath(delegate, p, canvasPaint);
 		}
 		else if (s instanceof GeneralPath)
 		{
 			GeneralPath gp = (GeneralPath) s;
 			Path p = toPath(gp, scale);
-			delegate.drawPath(p, canvasPaint);
+			//delegate.drawPath(p, canvasPaint);
+			drawPath(delegate, p, canvasPaint);
 		}
 		else
 		{
@@ -666,6 +668,40 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 
 
 		return path;
+	}
+	
+	private android.graphics.Paint pen2 = new android.graphics.Paint();
+	private  Matrix inv = new Matrix();
+	//see http://stackoverflow.com/questions/16090607/blurry-offset-paths-when-canvas-is-scaled-under-hardware-acceleration
+	private void drawPath(Canvas canvas, Path path, final android.graphics.Paint pen) {
+	    canvas.save();
+
+	    // get the current matrix
+	    Matrix mat = canvas.getMatrix();
+
+	    // reverse the effects of the current matrix	   
+	    mat.invert(inv);
+	    canvas.concat(inv);
+
+	    // transform the path
+	    path.transform(mat);
+
+	    // get the scale for transforming the Paint
+	    float[] pts = {0, 0, 1, 0}; // two points 1 unit away from each other
+	    mat.mapPoints(pts);
+	    float scale = (float) Math.sqrt(Math.pow(pts[0]-pts[2], 2) + Math.pow(pts[1]-pts[3], 2));
+
+	    // copy the existing Paint	   
+	    pen2.set(pen);
+
+	    // scale the Paint
+	    pen2.setStrokeMiter(pen.getStrokeMiter()*scale);
+	    pen2.setStrokeWidth(pen.getStrokeWidth()*scale);
+
+	    // draw the path
+	    canvas.drawPath(path, pen2);
+
+	    canvas.restore();
 	}
 
 
