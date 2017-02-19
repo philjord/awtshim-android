@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 
 import javaawt.image.VMBufferedImage;
@@ -16,10 +15,26 @@ public class VMImageIO extends ImageIO
 
 	public static BufferedImage read(InputStream in)
 	{
-		Bitmap bm = BitmapFactory.decodeStream(in);
-		//Bitmap.Config c = bm.getConfig(); //ARGB_8888 looks like all of them
+		//Possibly I'm getting 565 formats back?
+		//BitmapFactory.Options bitmapLoadingOptions = new BitmapFactory.Options();
+		//bitmapLoadingOptions.inPreferredConfig = Bitmap.Config.RGB_565;
+		
+		Bitmap bm = BitmapFactory.decodeStream(in);//,null,bitmapLoadingOptions);
+		Bitmap.Config c = bm.getConfig(); //ARGB_8888 looks like all of them
 
+		if(c!= Bitmap.Config.ARGB_8888)
+			System.out.println("Bitmap.Config == " + c);
 
+		
+		//In fact if I like this TextureLoader could go with BufferedImage.TYPE_USHORT_565_RGB
+		
+		//ImageCompoennt would need a new value for 565
+		//ImageComponentRetained
+		// and Texture too  
+		//pipeline updateTexture2DImage
+		
+		//Note that the opaque tests in sweethome, including the pixels chack for non opaue would need to be fixed
+		// in fact the pixel test could probably be short circuited easily
 
 		return new VMBufferedImage(bm);
 
