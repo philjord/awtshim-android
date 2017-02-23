@@ -14,9 +14,9 @@ public class VMGraphics implements Graphics
 	protected android.graphics.Canvas delegate = null;
 	// holds the various paint operations gear for the canvas, public to allow measure text
 	public android.graphics.Paint canvasPaint = null;
+	protected android.graphics.Paint.Style currentCanvasPaintStyle = android.graphics.Paint.Style.FILL;
 	//PJPJPJ ok so paint color is multiplied with drawimage color!!!
 	protected android.graphics.Paint drawPaint = null;
-
 
 	public VMGraphics(android.graphics.Canvas delegate)
 	{
@@ -136,7 +136,11 @@ public class VMGraphics implements Graphics
 	@Override
 	public void fillRect(int x, int y, int width, int height)
 	{
-		canvasPaint.setStyle(android.graphics.Paint.Style.FILL);
+		if(currentCanvasPaintStyle != android.graphics.Paint.Style.FILL)
+		{
+			canvasPaint.setStyle(android.graphics.Paint.Style.FILL);
+			currentCanvasPaintStyle = android.graphics.Paint.Style.FILL;
+		}
 		delegate.drawRect(toRect(x, y, width, height), canvasPaint);
 	}
 
@@ -144,63 +148,99 @@ public class VMGraphics implements Graphics
 	public void clearRect(int x, int y, int width, int height)
 	{
 		//TODO: possibly background color or something?
-		canvasPaint.setStyle(android.graphics.Paint.Style.FILL);
+		if(currentCanvasPaintStyle != android.graphics.Paint.Style.FILL)
+		{
+			canvasPaint.setStyle(android.graphics.Paint.Style.FILL);
+			currentCanvasPaintStyle = android.graphics.Paint.Style.FILL;
+		}
 		delegate.drawRect(toRect(x, y, width, height), canvasPaint);
 	}
 
 	@Override
 	public void drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight)
 	{
-		canvasPaint.setStyle(android.graphics.Paint.Style.STROKE);
+		if(currentCanvasPaintStyle != android.graphics.Paint.Style.STROKE)
+		{
+			canvasPaint.setStyle(android.graphics.Paint.Style.STROKE);
+			currentCanvasPaintStyle = android.graphics.Paint.Style.STROKE;
+		}
 		delegate.drawRoundRect(toRectF(x, y, width, height), arcWidth, arcHeight, canvasPaint);
 	}
 	
 	@Override
 	public void drawRect(int x, int y, int width, int height)
 	{
-		canvasPaint.setStyle(android.graphics.Paint.Style.STROKE);
+		if(currentCanvasPaintStyle != android.graphics.Paint.Style.STROKE)
+		{
+			canvasPaint.setStyle(android.graphics.Paint.Style.STROKE);
+			currentCanvasPaintStyle = android.graphics.Paint.Style.STROKE;
+		}
 		delegate.drawRect(toRectF(x, y, width, height), canvasPaint);
 	}
 
 	@Override
 	public void fillRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight)
 	{
-		canvasPaint.setStyle(android.graphics.Paint.Style.FILL);
+		if(currentCanvasPaintStyle != android.graphics.Paint.Style.FILL)
+		{
+			canvasPaint.setStyle(android.graphics.Paint.Style.FILL);
+			currentCanvasPaintStyle = android.graphics.Paint.Style.FILL;
+		}
 		delegate.drawRoundRect(toRectF(x, y, width, height), arcWidth, arcHeight, canvasPaint);
 	}
 
 	@Override
 	public void drawOval(int x, int y, int width, int height)
 	{
-		canvasPaint.setStyle(android.graphics.Paint.Style.STROKE);
+		if(currentCanvasPaintStyle != android.graphics.Paint.Style.STROKE)
+		{
+			canvasPaint.setStyle(android.graphics.Paint.Style.STROKE);
+			currentCanvasPaintStyle = android.graphics.Paint.Style.STROKE;
+		}
 		delegate.drawOval(toRectF(x, y, width, height), canvasPaint);
 	}
 
 	@Override
 	public void fillOval(int x, int y, int width, int height)
 	{
-		canvasPaint.setStyle(android.graphics.Paint.Style.FILL);
+		if(currentCanvasPaintStyle != android.graphics.Paint.Style.FILL)
+		{
+			canvasPaint.setStyle(android.graphics.Paint.Style.FILL);
+			currentCanvasPaintStyle = android.graphics.Paint.Style.FILL;
+		}
 		delegate.drawOval(toRectF(x, y, width, height), canvasPaint);
 	}
 
 	@Override
 	public void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle)
 	{
-		canvasPaint.setStyle(android.graphics.Paint.Style.STROKE);
+		if(currentCanvasPaintStyle != android.graphics.Paint.Style.STROKE)
+		{
+			canvasPaint.setStyle(android.graphics.Paint.Style.STROKE);
+			currentCanvasPaintStyle = android.graphics.Paint.Style.STROKE;
+		}
 		delegate.drawArc(toRectF(x, y, width, height), startAngle, arcAngle, false, canvasPaint);
 	}
 
 	@Override
 	public void fillArc(int x, int y, int width, int height, int startAngle, int arcAngle)
 	{
-		canvasPaint.setStyle(android.graphics.Paint.Style.FILL);
+		if(currentCanvasPaintStyle != android.graphics.Paint.Style.FILL)
+		{
+			canvasPaint.setStyle(android.graphics.Paint.Style.FILL);
+			currentCanvasPaintStyle = android.graphics.Paint.Style.FILL;
+		}
 		delegate.drawArc(toRectF(x, y, width, height), startAngle, arcAngle, false, canvasPaint);
 	}
 
 	@Override
 	public void drawPolyline(int[] xPoints, int[] yPoints, int nPoints)
 	{
-		canvasPaint.setStyle(android.graphics.Paint.Style.STROKE);
+		if(currentCanvasPaintStyle != android.graphics.Paint.Style.STROKE)
+		{
+			canvasPaint.setStyle(android.graphics.Paint.Style.STROKE);
+			currentCanvasPaintStyle = android.graphics.Paint.Style.STROKE;
+		}
 
 		Path p = new Path();
 		for (int i = 0; i < nPoints; i++)
@@ -215,7 +255,11 @@ public class VMGraphics implements Graphics
 	@Override
 	public void drawPolygon(int[] xPoints, int[] yPoints, int nPoints)
 	{
-		canvasPaint.setStyle(android.graphics.Paint.Style.STROKE);
+		if(currentCanvasPaintStyle != android.graphics.Paint.Style.STROKE)
+		{
+			canvasPaint.setStyle(android.graphics.Paint.Style.STROKE);
+			currentCanvasPaintStyle = android.graphics.Paint.Style.STROKE;
+		}
 		Path p = new Path();
 		for (int i = 0; i < nPoints; i++)
 		{
@@ -230,7 +274,11 @@ public class VMGraphics implements Graphics
 	public void fillPolygon(int[] xPoints, int[] yPoints, int nPoints)
 	{
 		//is this not part of the fill API?, not used so it's ok for now
-		canvasPaint.setStyle(android.graphics.Paint.Style.FILL);
+		if(currentCanvasPaintStyle != android.graphics.Paint.Style.FILL)
+		{
+			canvasPaint.setStyle(android.graphics.Paint.Style.FILL);
+			currentCanvasPaintStyle = android.graphics.Paint.Style.FILL;
+		}
 		Path p = new Path();
 		for (int i = 0; i < nPoints; i++)
 		{
@@ -244,7 +292,11 @@ public class VMGraphics implements Graphics
 	@Override
 	public void drawString(String s, int x, int y)
 	{
-		canvasPaint.setStyle(android.graphics.Paint.Style.FILL);
+		if(currentCanvasPaintStyle != android.graphics.Paint.Style.FILL)
+		{
+			canvasPaint.setStyle(android.graphics.Paint.Style.FILL);
+			currentCanvasPaintStyle = android.graphics.Paint.Style.FILL;
+		}
 		delegate.drawText(s, x, y, canvasPaint);
 	}
 

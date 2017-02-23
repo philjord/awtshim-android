@@ -35,7 +35,6 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 {
 	// used by the setpaint ready for the next fill method of
 	protected android.graphics.Paint fillPaint = null;
-
 	private Composite currentComposite = null;
 
 	public VMGraphics2D(android.graphics.Bitmap bitmap)
@@ -78,8 +77,12 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 
 	@Override
 	public void drawString(String s, float x, float y)
-	{
-		canvasPaint.setStyle(android.graphics.Paint.Style.FILL);
+	{		
+		if(currentCanvasPaintStyle != android.graphics.Paint.Style.FILL)
+		{
+			canvasPaint.setStyle(android.graphics.Paint.Style.FILL);
+			currentCanvasPaintStyle = android.graphics.Paint.Style.FILL;
+		}
 		delegate.drawText(s, x, y, canvasPaint);
 	}
 
@@ -268,7 +271,12 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 		{
 			//	canvasPaint.setAlpha((int)(255 * ((AlphaComposite)currentComposite).getAlpha()));
 		}
-		canvasPaint.setStyle(android.graphics.Paint.Style.STROKE);
+		 
+		if(currentCanvasPaintStyle != android.graphics.Paint.Style.STROKE)
+		{
+			canvasPaint.setStyle(android.graphics.Paint.Style.STROKE);
+			currentCanvasPaintStyle = android.graphics.Paint.Style.STROKE;
+		}
 		if (s instanceof Line2D.Double)
 		{
 			Line2D.Double l = (Line2D.Double) s;
