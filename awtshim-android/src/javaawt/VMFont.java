@@ -11,7 +11,7 @@ import javaawt.geom.Rectangle2D;
 public class VMFont extends Font
 {
 	private android.graphics.Paint fontSizingPaint = new android.graphics.Paint();
-	
+
 	private Typeface typeface;
 	private int size = 12;
 
@@ -33,19 +33,27 @@ public class VMFont extends Font
 	{
 		return size;
 	}
+
 	@Override
 	public void setSize(int fontSize)
 	{
-		this.size = fontSize;		
+		this.size = fontSize;
 	}
-	
+
 	@Override
 	public Rectangle2D getStringBounds(String text)
-	{				
-		fontSizingPaint.setTextSize(getSize());
+	{
 		Rect r = new Rect();
-		fontSizingPaint.getTextBounds(text, 0, text.length(), r);
-		Rectangle2D textBounds = new Rectangle(r.left, r.bottom, r.right - r.left, r.top - r.bottom);
+		synchronized(fontSizingPaint)
+		{
+			fontSizingPaint.setTextSize(getSize());		
+			fontSizingPaint.getTextBounds(text, 0, text.length(), r);
+		}
+		//Rectangle2D textBounds = new Rectangle(r.left, r.bottom, r.right - r.left, r.top - r.bottom);
+		//PJPJ on desktop the return should be say height +15, y -12
+		// on android this is returned as height -18, y +4, I'm not sure why
+		// so swap to desktop style
+		Rectangle2D textBounds = new Rectangle2D.Float(r.left, r.top, (r.right - r.left), -(r.top - r.bottom));
 		return textBounds;
 	}
 }
