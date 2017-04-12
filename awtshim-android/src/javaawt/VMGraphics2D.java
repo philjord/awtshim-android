@@ -30,7 +30,6 @@ import javaawt.image.BufferedImageOp;
 import javaawt.image.ImageObserver;
 import javaawt.image.RenderedImage;
 
-
 public class VMGraphics2D extends VMGraphics implements Graphics2D
 {
 	// used by the setpaint ready for the next fill method of
@@ -49,6 +48,36 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 		fillPaint.setStyle(android.graphics.Paint.Style.FILL);
 	}
 
+	//Note not used due to matrix set/get bugs in canvas (from hardware accel)
+	public static AffineTransform fromMatrix(Matrix m)
+	{
+		if (m != null)
+		{
+			float[] mat = new float[9];
+			m.getValues(mat);
+			//http://stackoverflow.com/questions/3534642/how-to-map-javas-affinetransform-to-androids-matrix
+			AffineTransform at = new AffineTransform(mat[0], mat[4], mat[1], mat[3], mat[2], mat[5]);
+			return at;
+		}
+		else
+			return null;
+	}
+
+	public static Matrix toMatrix(AffineTransform at)
+	{
+		if (at != null)
+		{
+			//http://stackoverflow.com/questions/3534642/how-to-map-javas-affinetransform-to-androids-matrix
+			// just believe me...
+			float[] fmat = new float[] { (float) at.getScaleX(), (float) at.getShearX(), (float) at.getTranslateX(), (float) at.getScaleY(),
+					(float) at.getShearY(), (float) at.getTranslateY(), 0.0f, 0.0f, 1.0f };
+
+			Matrix ret = new Matrix();
+			ret.setValues(fmat);
+			return ret;
+		}
+		return null;
+	}
 
 	public Graphics2D create()
 	{
@@ -77,8 +106,8 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 
 	@Override
 	public void drawString(String s, float x, float y)
-	{		
-		if(currentCanvasPaintStyle != android.graphics.Paint.Style.FILL)
+	{
+		if (currentCanvasPaintStyle != android.graphics.Paint.Style.FILL)
 		{
 			canvasPaint.setStyle(android.graphics.Paint.Style.FILL);
 			currentCanvasPaintStyle = android.graphics.Paint.Style.FILL;
@@ -104,7 +133,6 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 			delegate.fill3DRect(x, y, width, height, raised);
 		}*/
 
-
 	@Override
 	public boolean drawImage(Image img, AffineTransform xform, ImageObserver obs)
 	{
@@ -116,7 +144,11 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 	{
 		if (img instanceof BufferedImage)
 		{
-			delegate.drawBitmap((android.graphics.Bitmap) img.getDelegate(), toMatrix(xform), drawPaint);
+			Matrix m = toMatrix(xform);
+			if (m != null)
+				delegate.drawBitmap((android.graphics.Bitmap) img.getDelegate(), m, drawPaint);
+			else
+				delegate.drawBitmap((android.graphics.Bitmap) img.getDelegate(), 0, 0, drawPaint);
 		}
 		else
 		{
@@ -130,7 +162,6 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 		throw new UnsupportedOperationException();
 		//delegate.drawString(iterator, x, y);
 	}
-
 
 	@Override
 	public void setPaint(Paint paint)
@@ -263,7 +294,8 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 	public void draw(Shape s, float scale)
 	{
 		//TODO: does this in fact do anything, is this even vaguely right? must look this up
-		if (currentComposite == null || !(currentComposite instanceof AlphaComposite) || ((AlphaComposite) currentComposite).getType() == AlphaComposite.SRC_IN)
+		if (currentComposite == null || !(currentComposite instanceof AlphaComposite)
+				|| ((AlphaComposite) currentComposite).getType() == AlphaComposite.SRC_IN)
 		{
 			//	canvasPaint.setAlpha(255);
 		}
@@ -271,8 +303,8 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 		{
 			//	canvasPaint.setAlpha((int)(255 * ((AlphaComposite)currentComposite).getAlpha()));
 		}
-		 
-		if(currentCanvasPaintStyle != android.graphics.Paint.Style.STROKE)
+
+		if (currentCanvasPaintStyle != android.graphics.Paint.Style.STROKE)
 		{
 			canvasPaint.setStyle(android.graphics.Paint.Style.STROKE);
 			currentCanvasPaintStyle = android.graphics.Paint.Style.STROKE;
@@ -345,11 +377,11 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 			BasicStroke bs = (BasicStroke) s;
 			canvasPaint.setStrokeWidth(bs.getLineWidth());
 
-			canvasPaint.setStrokeCap(bs.getEndCap() == BasicStroke.CAP_ROUND ? Cap.ROUND : bs.getEndCap() == BasicStroke.CAP_SQUARE ?
-					Cap.SQUARE : Cap.BUTT);
+			canvasPaint.setStrokeCap(
+					bs.getEndCap() == BasicStroke.CAP_ROUND ? Cap.ROUND : bs.getEndCap() == BasicStroke.CAP_SQUARE ? Cap.SQUARE : Cap.BUTT);
 			canvasPaint.setStrokeMiter(bs.getMiterLimit());
-			canvasPaint.setStrokeJoin(bs.getLineJoin() == BasicStroke.JOIN_ROUND ? Join.ROUND : bs.getLineJoin() == BasicStroke.JOIN_BEVEL ?
-					Join.BEVEL : Join.MITER);
+			canvasPaint.setStrokeJoin(bs.getLineJoin() == BasicStroke.JOIN_ROUND ? Join.ROUND
+					: bs.getLineJoin() == BasicStroke.JOIN_BEVEL ? Join.BEVEL : Join.MITER);
 			// possibly dash might be useful?
 		}
 		else
@@ -369,7 +401,6 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 	{
 		throw new UnsupportedOperationException();
 	}
-
 
 	/**
 	 * accepted but all ignored
@@ -490,7 +521,6 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 		return at;
 	}
 
-
 	@Override
 	public void translate(int tx, int ty)
 	{
@@ -508,7 +538,6 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 	{
 		throw new UnsupportedOperationException();
 	}
-
 
 	@Override
 	public void setBackground(Color color)
@@ -548,69 +577,50 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 		currentComposite = composite;
 	}
 
-	//Note not used due to matrix set/get bugs in canvas (from hardware accel)
-	public static AffineTransform fromMatrix(Matrix m)
-	{
-		float[] mat = new float[9];
-		m.getValues(mat);
-		//http://stackoverflow.com/questions/3534642/how-to-map-javas-affinetransform-to-androids-matrix
-		AffineTransform at = new AffineTransform(mat[0], mat[4], mat[1], mat[3], mat[2], mat[5]);
-		return at;
-	}
-
-	public static Matrix toMatrix(AffineTransform at)
-	{
-		//http://stackoverflow.com/questions/3534642/how-to-map-javas-affinetransform-to-androids-matrix
-		// just believe me...
-		float[] fmat = new float[]
-				{
-						(float) at.getScaleX(), (float) at.getShearX(), (float) at.getTranslateX(),
-						(float) at.getScaleY(), (float) at.getShearY(), (float) at.getTranslateY(), 0.0f, 0.0f, 1.0f
-				};
-
-		Matrix ret = new Matrix();
-		ret.setValues(fmat);
-		return ret;
-	}
-
 	public static android.graphics.RectF toRectF(Rectangle2D.Double r)
 	{
-		return new android.graphics.RectF((float) r.getX(), (float) r.getY(), (float) (r.getX() + r.getWidth()), (float) (r.getY() + r.getHeight()));
+		return new android.graphics.RectF((float) r.getX(), (float) r.getY(), (float) (r.getX() + r.getWidth()),
+				(float) (r.getY() + r.getHeight()));
 	}
 
 	public static android.graphics.RectF toRectF(Rectangle2D.Float r)
 	{
-		return new android.graphics.RectF((float) r.getX(), (float) r.getY(), (float) (r.getX() + r.getWidth()), (float) (r.getY() + r.getHeight()));
+		return new android.graphics.RectF((float) r.getX(), (float) r.getY(), (float) (r.getX() + r.getWidth()),
+				(float) (r.getY() + r.getHeight()));
 	}
 
 	public static android.graphics.RectF toRectF(Arc2D.Double r)
 	{
-		return new android.graphics.RectF((float) r.getX(), (float) r.getY(), (float) (r.getX() + r.getWidth()), (float) (r.getY() + r.getHeight()));
+		return new android.graphics.RectF((float) r.getX(), (float) r.getY(), (float) (r.getX() + r.getWidth()),
+				(float) (r.getY() + r.getHeight()));
 	}
 
 	public static android.graphics.RectF toRectF(Arc2D.Float r)
 	{
-		return new android.graphics.RectF((float) r.getX(), (float) r.getY(), (float) (r.getX() + r.getWidth()), (float) (r.getY() + r.getHeight()));
+		return new android.graphics.RectF((float) r.getX(), (float) r.getY(), (float) (r.getX() + r.getWidth()),
+				(float) (r.getY() + r.getHeight()));
 	}
 
 	public static android.graphics.RectF toRectF(Ellipse2D.Float r)
 	{
-		return new android.graphics.RectF((float) r.getX(), (float) r.getY(), (float) (r.getX() + r.getWidth()), (float) (r.getY() + r.getHeight()));
+		return new android.graphics.RectF((float) r.getX(), (float) r.getY(), (float) (r.getX() + r.getWidth()),
+				(float) (r.getY() + r.getHeight()));
 	}
 
 	public static android.graphics.RectF toRectF(Ellipse2D.Double r)
 	{
-		return new android.graphics.RectF((float) r.getX(), (float) r.getY(), (float) (r.getX() + r.getWidth()), (float) (r.getY() + r.getHeight()));
+		return new android.graphics.RectF((float) r.getX(), (float) r.getY(), (float) (r.getX() + r.getWidth()),
+				(float) (r.getY() + r.getHeight()));
 	}
 
 	public static float[] toPnts(Line2D.Double l)
 	{
-		return new float[]{(float) l.getX1(), (float) l.getY1(), (float) l.getX2(), (float) l.getY2()};
+		return new float[] { (float) l.getX1(), (float) l.getY1(), (float) l.getX2(), (float) l.getY2() };
 	}
 
 	public static float[] toPnts(Line2D.Float l)
 	{
-		return new float[]{(float) l.getX1(), (float) l.getY1(), (float) l.getX2(), (float) l.getY2()};
+		return new float[] { (float) l.getX1(), (float) l.getY1(), (float) l.getX2(), (float) l.getY2() };
 	}
 
 	public static Path toPath(Path2D path2d)
@@ -633,9 +643,9 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 		return toPath(a.getPathIterator(null), Path2D.WIND_NON_ZERO, scale);
 	}
 
-/**
- * scale to avoid blurry mess
- */
+	/**
+	 * scale to avoid blurry mess
+	 */
 	public static Path toPath(PathIterator pi, int windingRule, float scale)
 	{
 		//https://developer.android.com/reference/android/graphics/Path.html
@@ -674,43 +684,43 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 			pi.next();
 		}
 
-
 		return path;
 	}
-	
+
 	private android.graphics.Paint pen2 = new android.graphics.Paint();
-	private  Matrix inv = new Matrix();
+	private Matrix inv = new Matrix();
+
 	//see http://stackoverflow.com/questions/16090607/blurry-offset-paths-when-canvas-is-scaled-under-hardware-acceleration
-	private void drawPath(Canvas canvas, Path path, final android.graphics.Paint pen) {
-	    canvas.save();
+	private void drawPath(Canvas canvas, Path path, final android.graphics.Paint pen)
+	{
+		canvas.save();
 
-	    // get the current matrix
-	    Matrix mat = canvas.getMatrix();
+		// get the current matrix
+		Matrix mat = canvas.getMatrix();
 
-	    // reverse the effects of the current matrix	   
-	    mat.invert(inv);
-	    canvas.concat(inv);
+		// reverse the effects of the current matrix	   
+		mat.invert(inv);
+		canvas.concat(inv);
 
-	    // transform the path
-	    path.transform(mat);
+		// transform the path
+		path.transform(mat);
 
-	    // get the scale for transforming the Paint
-	    float[] pts = {0, 0, 1, 0}; // two points 1 unit away from each other
-	    mat.mapPoints(pts);
-	    float scale = (float) Math.sqrt(Math.pow(pts[0]-pts[2], 2) + Math.pow(pts[1]-pts[3], 2));
+		// get the scale for transforming the Paint
+		float[] pts = { 0, 0, 1, 0 }; // two points 1 unit away from each other
+		mat.mapPoints(pts);
+		float scale = (float) Math.sqrt(Math.pow(pts[0] - pts[2], 2) + Math.pow(pts[1] - pts[3], 2));
 
-	    // copy the existing Paint	   
-	    pen2.set(pen);
+		// copy the existing Paint	   
+		pen2.set(pen);
 
-	    // scale the Paint
-	    pen2.setStrokeMiter(pen.getStrokeMiter()*scale);
-	    pen2.setStrokeWidth(pen.getStrokeWidth()*scale);
+		// scale the Paint
+		pen2.setStrokeMiter(pen.getStrokeMiter() * scale);
+		pen2.setStrokeWidth(pen.getStrokeWidth() * scale);
 
-	    // draw the path
-	    canvas.drawPath(path, pen2);
+		// draw the path
+		canvas.drawPath(path, pen2);
 
-	    canvas.restore();
+		canvas.restore();
 	}
-
 
 }
