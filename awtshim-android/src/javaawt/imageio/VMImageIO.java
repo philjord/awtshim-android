@@ -42,9 +42,9 @@ public class VMImageIO extends ImageIO
 
 	}
 
-	public static BufferedImage read(String url) throws MalformedURLException, IOException
+	public static BufferedImage read(URL url) throws IOException
 	{
-		InputStream is = (InputStream) new URL(url).getContent();
+		InputStream is = (InputStream) url.getContent();
 		return read(is);
 	}
 
