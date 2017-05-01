@@ -9,6 +9,9 @@ import javaawt.image.ImageObserver;
 
 public class VMGraphics implements Graphics
 {
+	// moved up here so if a paint Color is set in 2D mode it's reflected in these calls
+	protected Paint currentFillPaint = null;
+	
 	protected int currentColor = 0xFFFFFFFF; // used to swap out on paint calls
 
 	protected android.graphics.Canvas delegate = null;
@@ -36,6 +39,11 @@ public class VMGraphics implements Graphics
 	@Override
 	public Graphics create()
 	{
+		currentFillPaint = null;
+		currentColor = 0xFFFFFFFF;
+		canvasPaint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+		drawPaint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+		currentCanvasPaintStyle = android.graphics.Paint.Style.FILL;		
 		delegate.save();
 		return this;
 	}
@@ -292,12 +300,28 @@ public class VMGraphics implements Graphics
 	@Override
 	public void drawString(String s, int x, int y)
 	{
-		if(currentCanvasPaintStyle != android.graphics.Paint.Style.FILL)
+		// record in order to reset at teh end, not sure why other draws aren't setting properly
+		int originalCanvasPaintColor = canvasPaint.getColor();
+		if (currentFillPaint == null || currentFillPaint instanceof Color)
+		{
+			if (currentFillPaint != null)
+			{
+				canvasPaint.setColor(toColor((Color) currentFillPaint));
+			}
+			else
+			{
+				// otherwise just use foreground
+				canvasPaint.setColor(currentColor);
+			}
+		}
+		if (currentCanvasPaintStyle != android.graphics.Paint.Style.FILL)
 		{
 			canvasPaint.setStyle(android.graphics.Paint.Style.FILL);
 			currentCanvasPaintStyle = android.graphics.Paint.Style.FILL;
 		}
 		delegate.drawText(s, x, y, canvasPaint);
+		
+		canvasPaint.setColor(originalCanvasPaintColor);		
 	}
 
 	@Override

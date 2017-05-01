@@ -79,8 +79,17 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 		return null;
 	}
 
+	@Override
 	public Graphics2D create()
 	{
+		currentFillPaint = null;
+		currentColor = 0xFFFFFFFF;
+		canvasPaint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+		drawPaint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+		currentCanvasPaintStyle = android.graphics.Paint.Style.FILL;		
+		fillPaint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+		fillPaint.setStyle(android.graphics.Paint.Style.FILL);
+		currentComposite = null;
 		delegate.save();
 		return this;
 	}
@@ -107,12 +116,28 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 	@Override
 	public void drawString(String s, float x, float y)
 	{
+		// record in order to reset at teh end, not sure why other draws aren't setting properly
+		int originalCanvasPaintColor = canvasPaint.getColor();
+		if (currentFillPaint == null || currentFillPaint instanceof Color)
+		{
+			if (currentFillPaint != null)
+			{
+				canvasPaint.setColor(toColor((Color) currentFillPaint));
+			}
+			else
+			{
+				// otherwise just use foreground
+				canvasPaint.setColor(currentColor);
+			}
+		}
 		if (currentCanvasPaintStyle != android.graphics.Paint.Style.FILL)
 		{
 			canvasPaint.setStyle(android.graphics.Paint.Style.FILL);
 			currentCanvasPaintStyle = android.graphics.Paint.Style.FILL;
 		}
 		delegate.drawText(s, x, y, canvasPaint);
+		
+		canvasPaint.setColor(originalCanvasPaintColor);		
 	}
 
 	/*	
@@ -176,7 +201,7 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 		}
 	}
 
-	private Paint currentFillPaint = null;
+
 
 	@Override
 	public void fill(Shape s)
@@ -304,6 +329,21 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 			//	canvasPaint.setAlpha((int)(255 * ((AlphaComposite)currentComposite).getAlpha()));
 		}
 
+		// record in order to reset at teh end, not sure why other draws aren't setting properly
+		int originalCanvasPaintColor = canvasPaint.getColor();
+		if (currentFillPaint == null || currentFillPaint instanceof Color)
+		{
+			if (currentFillPaint != null)
+			{
+				canvasPaint.setColor(toColor((Color) currentFillPaint));
+			}
+			else
+			{
+				// otherwise just use foreground
+				canvasPaint.setColor(currentColor);
+			}
+		}
+		
 		if (currentCanvasPaintStyle != android.graphics.Paint.Style.STROKE)
 		{
 			canvasPaint.setStyle(android.graphics.Paint.Style.STROKE);
@@ -367,6 +407,8 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 		{
 			System.out.println("Unhandled draw(Shape s) " + s);
 		}
+		
+		canvasPaint.setColor(originalCanvasPaintColor);
 	}
 
 	@Override
@@ -383,6 +425,10 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 			canvasPaint.setStrokeJoin(bs.getLineJoin() == BasicStroke.JOIN_ROUND ? Join.ROUND
 					: bs.getLineJoin() == BasicStroke.JOIN_BEVEL ? Join.BEVEL : Join.MITER);
 			// possibly dash might be useful?
+		}
+		else if(s == null)
+		{
+			canvasPaint.setStrokeWidth(1f);
 		}
 		else
 		{
