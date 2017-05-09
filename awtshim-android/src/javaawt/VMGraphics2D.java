@@ -157,7 +157,22 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 		{
 			delegate.fill3DRect(x, y, width, height, raised);
 		}*/
-
+	
+	@Override
+	public void fillRect(int x, int y, int width, int height)
+	{
+		//support a TexturePaint style
+		if (currentFillPaint != null || currentFillPaint instanceof TexturePaint)
+		{
+			Rectangle2D.Float rect = new Rectangle2D.Float(x, y, width, height);
+			fill(rect, 1.0f);
+		}
+		else
+		{
+			super.fillRect(x, y, width, height);
+		}
+	}
+	
 	@Override
 	public boolean drawImage(Image img, AffineTransform xform, ImageObserver obs)
 	{
