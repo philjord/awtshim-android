@@ -21,7 +21,7 @@ public class VMBufferedImage extends BufferedImage
 		this(Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888));
 		if( typeIntArgb != TYPE_INT_ARGB)
 		{
-			throw new UnsupportedOperationException("Android only has 4 byte bitmaps!");
+			throw new UnsupportedOperationException("Android only has 4 byte bitmaps! BufferedImage.TYPE_INT_ARGB");
 		}
 		//  sweethome uses at least
 		//this.texture.getFormat() == Texture.RGBA ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB);
