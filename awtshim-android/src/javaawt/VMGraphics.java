@@ -251,11 +251,12 @@ public class VMGraphics implements Graphics
 		}
 
 		Path p = new Path();
+		p.moveTo(xPoints[0], yPoints[0]);
 		for (int i = 0; i < nPoints; i++)
 		{
-			p.moveTo(xPoints[i], yPoints[i]);
+			p.lineTo(xPoints[i], yPoints[i]);
 		}
-		p.lineTo(xPoints[0], yPoints[0]); // there is a setLastPoint action but i found it not to work as expected
+		  
 
 		delegate.drawPath(p, canvasPaint);
 	}
@@ -269,11 +270,12 @@ public class VMGraphics implements Graphics
 			currentCanvasPaintStyle = android.graphics.Paint.Style.STROKE;
 		}
 		Path p = new Path();
+		p.moveTo(xPoints[0], yPoints[0]);
 		for (int i = 0; i < nPoints; i++)
 		{
-			p.moveTo(xPoints[i], yPoints[i]);
+			p.lineTo(xPoints[i], yPoints[i]);
 		}
-		p.lineTo(xPoints[0], yPoints[0]); // there is a setLastPoint action but i found it not to work as expected
+		p.lineTo(xPoints[0], yPoints[0]);
 
 		delegate.drawPath(p, canvasPaint);
 	}
@@ -288,9 +290,10 @@ public class VMGraphics implements Graphics
 			currentCanvasPaintStyle = android.graphics.Paint.Style.FILL;
 		}
 		Path p = new Path();
+		p.moveTo(xPoints[0], yPoints[0]);
 		for (int i = 0; i < nPoints; i++)
 		{
-			p.moveTo(xPoints[i], yPoints[i]);
+			p.lineTo(xPoints[i], yPoints[i]);
 		}
 		p.lineTo(xPoints[0], yPoints[0]); // there is a setLastPoint action but i found it not to work as expected
 
