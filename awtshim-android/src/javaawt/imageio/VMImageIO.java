@@ -44,7 +44,7 @@ public class VMImageIO extends ImageIO
 
 	public static BufferedImage read(URL url) throws IOException
 	{
-		InputStream is = (InputStream) url.getContent();
+		InputStream is = url.openStream();
 		return read(is);
 	}
 
