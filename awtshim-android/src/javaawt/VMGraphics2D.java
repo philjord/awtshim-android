@@ -369,20 +369,57 @@ public class VMGraphics2D extends VMGraphics implements Graphics2D
 			Line2D.Double l = (Line2D.Double) s;
 			delegate.drawLines(toPnts(l), canvasPaint);
 		}
-		else if (s instanceof Line2D.Float)
+		else if(s instanceof Line2D.Float)
 		{
 			Line2D.Float l = (Line2D.Float) s;
 			delegate.drawLines(toPnts(l), canvasPaint);
 		}
-		else if (s instanceof Arc2D.Double)
+		else if (s instanceof Arc2D)
 		{
-			Arc2D.Double a = (Arc2D.Double) s;
-			delegate.drawArc(toRectF(a), (float) a.getAngleStart(), (float) a.getAngleExtent(), a.getArcType() == Arc2D.PIE, canvasPaint);
-		}
-		else if (s instanceof Arc2D.Float)
-		{
-			Arc2D.Float a = (Arc2D.Float) s;
-			delegate.drawArc(toRectF(a), (float) a.getAngleStart(), (float) a.getAngleExtent(), a.getArcType() == Arc2D.PIE, canvasPaint);
+			/*Desktop
+			 Draws the outline of a circular or elliptical arc covering the specified rectangle.
+
+			The resulting arc begins at startAngle and extends for arcAngle degrees, using the current color. 
+			Angles are interpreted such that 0 degrees is at the 3 o'clock position. 
+			A positive value indicates a counter-clockwise rotation while a negative value indicates a clockwise rotation.
+
+			The center of the arc is the center of the rectangle whose origin is (x, y) 
+			and whose size is specified by the width and height arguments. 
+			 */
+			/* Canvas
+			 * Draw the specified arc, which will be scaled to fit inside the specified oval.
+
+			 If the start angle is negative or >= 360, the start angle is treated as start angle modulo 360.
+
+			 If the sweep angle is >= 360, then the oval is drawn completely. 
+			 Note that this differs slightly from SkPath::arcTo, which treats the sweep angle modulo 360. 
+			 If the sweep angle is negative, the sweep angle is treated as sweep angle modulo 360
+
+			 The arc is drawn clockwise. 
+			 An angle of 0 degrees correspond to the geometric angle of 0 degrees (3 o'clock on a watch.) 
+			 */                                                
+			// Desktop start 0 degree = 3 o'clock; +ve extent = counter clockwise and -ve extent = clockwise
+			// Android start 0 degree = 3 o'clock; +ve extent = clockwise and -ve extent = clockwise but modulo 360
+			// Note getPathIterator does not suffer this problem
+			// https://developer.android.com/reference/android/graphics/Canvas#drawArc(float,%20float,%20float,%20float,%20float,%20float,%20boolean,%20android.graphics.Paint)
+			// vs
+			// https://docs.oracle.com/javase/7/docs/api/java/awt/Graphics.html#drawArc%28int,%20int,%20int,%20int,%20int,%20int%29
+			// swap from Canvas coords to Graphics
+			
+			Arc2D a = (Arc2D)s;
+			float start = (float)a.getAngleStart();
+			float extent = (float)a.getAngleExtent();
+			start = (360 - start) % 360 - (extent < 0 ? extent : 0);
+			extent = -extent;
+			
+			if (s instanceof Arc2D.Double)
+			{				
+				delegate.drawArc(toRectF((Arc2D.Double) s), start, extent, a.getArcType() == Arc2D.PIE, canvasPaint);
+			}
+			else if (s instanceof Arc2D.Float)
+			{
+				delegate.drawArc(toRectF((Arc2D.Float) s), start, extent, a.getArcType() == Arc2D.PIE, canvasPaint);
+			}
 		}
 		else if (s instanceof Ellipse2D.Double)
 		{
