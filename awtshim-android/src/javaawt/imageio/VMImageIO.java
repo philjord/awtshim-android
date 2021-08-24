@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -47,23 +48,14 @@ public class VMImageIO extends ImageIO
 		InputStream is = url.openStream();
 		return read(is);
 	}
-
+	
 	public static void write(BufferedImage image, String type, File imageFile)
 	{
-
-		Bitmap.CompressFormat format = Bitmap.CompressFormat.PNG;
-		// PNG is a lossless format, the compression factor (100) is ignored
-
-		if (type.equalsIgnoreCase("jpg") || type.equalsIgnoreCase("jepg"))
-			format = Bitmap.CompressFormat.JPEG;
-
-		Bitmap bmp = (Bitmap) image.getDelegate();
-
-		FileOutputStream out = null;
+		FileOutputStream output = null;
 		try
 		{
-			out = new FileOutputStream(imageFile);
-			bmp.compress(format, 100, out); // bmp is your Bitmap instance				
+			output = new FileOutputStream(imageFile);
+			write(image, type, output);
 		}
 		catch (Exception e)
 		{
@@ -73,9 +65,9 @@ public class VMImageIO extends ImageIO
 		{
 			try
 			{
-				if (out != null)
+				if (output != null)
 				{
-					out.close();
+					output.close();
 				}
 			}
 			catch (IOException e)
@@ -83,6 +75,39 @@ public class VMImageIO extends ImageIO
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public static void write(BufferedImage image, String type, OutputStream output)
+	{
+		Bitmap.CompressFormat format = Bitmap.CompressFormat.PNG;
+		// PNG is a lossless format, the compression factor (100) is ignored
 
+		if (type.equalsIgnoreCase("jpg") || type.equalsIgnoreCase("jepg"))
+			format = Bitmap.CompressFormat.JPEG;
+
+		Bitmap bmp = (Bitmap) image.getDelegate();
+
+		try
+		{
+			bmp.compress(format, 100, output); // bmp is your Bitmap instance				
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				if (output != null)
+				{
+					output.close();
+				}
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 }
