@@ -2,7 +2,8 @@ package javaawt.image;
 
 import java.nio.IntBuffer;
 
-import android.support.v4.graphics.BitmapCompat;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 
 public class VMRaster implements Raster
 {
@@ -40,11 +41,18 @@ public class VMRaster implements Raster
 	@Override
 	public DataBuffer getDataBuffer()
 	{		
-
-		IntBuffer buffer1 = IntBuffer.allocate(BitmapCompat.getAllocationByteCount(delegate) / 4);
+		IntBuffer buffer1 = IntBuffer.allocate(getBitmapByteCount(delegate) / 4);			
 		delegate.copyPixelsToBuffer(buffer1);
 		VMDataBufferInt ret = new VMDataBufferInt(buffer1);
 		return ret;
 
+	}
+	
+	public static int getBitmapByteCount(android.graphics.Bitmap bitmap) {
+	    if (VERSION.SDK_INT < VERSION_CODES.HONEYCOMB_MR1)
+	        return bitmap.getRowBytes() * bitmap.getHeight();
+	    if (VERSION.SDK_INT < VERSION_CODES.KITKAT)
+	        return bitmap.getByteCount();
+	    return bitmap.getAllocationByteCount();
 	}
 }

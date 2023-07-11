@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<jardesc>
+    <jar path="C:/Users/pjnz/StudioProjects/renovations3d-android/app/libs/awtshim-android.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/Renovations3DDesktop/exportawtshim-android.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" manifestLocation="/ElderScrollsExplorer/META-INF/MANIFEST.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=awtshim-android/src"/>
+        <javaElement handleIdentifier="=java3d-utils-and/src\/classes\/share=/optional=/true=/=/maven.pomderived=/true=/&lt;org.jogamp.java3d"/>
+        <file path="/awtshim-android/.gitignore"/>
+        <file path="/awtshim-android/.classpath"/>
+        <javaElement handleIdentifier="=java3d-utils-and/src\/classes\/share=/optional=/true=/=/maven.pomderived=/true=/&lt;org.jogamp.java3d.loaders"/>
+        <file path="/awtshim-android/.project"/>
+    </selectedElements>
+</jardesc>
